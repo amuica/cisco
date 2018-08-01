@@ -1,0 +1,643 @@
+
+page 421
+page 435
+
+A campus network:
+			- is an enterprise network consisting of many LANs in one or more
+buildings, all connected and all usually in the same geographic area
+
+
+
+route caching (first-generation MLS), topology based (second-generation MLS)
+
+content-addressable memory (CAM)
+Cisco Express Forwarding (CEF)
+Forwarding Information Base (FIB)
+multilayer switching (MLS)
+Ternary Content-Addressable Memory(TCAM)
+Unidirectional Link Detection (UDLD)
+
+	Switch(config)# mac address-table aging-time seconds
+	
+	Configure static CAM table entries:\
+	
+	Switch(config)# mac address-table static mac-address vlan vlan-id interface type mod/num
+	
+	
+Logical operation unit (LOU) register
+
+
+	Find the location of a specific MAC address.                show mac address-table dynamic address mac-address
+    Display all MAC addresses learned on aspecific interface.   show mac address-table dynamic interface type number Display the current CAM table size. show mac address-table count
+    Enter a static CAM table entry.                             mac address-table static mac-address vlan vlan-id { drop | interface type number}
+    Clear a CAM entry.                                          clear mac address-table dynamic [ address mac-address | interface type number | vlan vlan-id ]
+    Display TCAM utilization.                                   show platform tcam utilization
+    Display the current memory template.                        show sdm prefer
+    Configure a preferred memory template.                      sdm prefer template
+
+	
+SWITCH PORT CONFIGURATION	
+	
+Detecting Error Conditions
+	
+	switch(config)# [ no ] errdisable detect cause [ all | cause-name ]\
+	Switch(config)# errdisable recovery cause [ all | cause-name ]
+	Switch(config)# errdisable recovery interval seconds\
+	Switch(config)# errdisable recovery cause inline-power
+	Switch(config)# errdisable recovery interval 3600
+	
+Troubleshooting Port Connectivity
+
+	show interface status err-disabled
+	show interfaces gigabitethernet 1/0/13
+	Notice that there are many runts (packets that were truncated before they were fully received) and input errors.
+
+Cisco Discovery Protocol - enqble by default( 60 seconds)
+	Switch(config)#cdp run - for all interface
+	Switch(config-if)#cdp enable - for specific interface
+	Switch(config)# show cdp neighbors [ type member/module/number ] [ detail ]
+	show cdp neighbors gig1/0/22 detail
+
+Link Layer Discovery Protocol(LLDP)
+
+	Switch(config)#lldp run - for all interface
+	Switch(config-if)#lldp recieved / transmit - for specific interface
+	Switch(config)# show lldp neighbors [ type member/module/number ] [ detail ]
+	show lldp neighbors gig1/0/22 detail
+
+Using Power over Ethernet(PoE)
+
+    1. An external AC adapter connected directly to the device
+    2. A power injector, which connects to AC power near an Ethernet switch and provides
+    DC power over the network data cable
+    3. A switch capable of providing DC Power over Ethernet (PoE) over the network data
+    cable
+	
+	
+		Method Common Name Power Offered
+		
+			Cisco Inline Power ILP 7W
+			IEEE 802.3af PoE 15.4W
+			IEEE 802.3at PoE+ 25.5W
+			Cisco Universal PoE UPoE 60W
+		
+		Power Class Maximum Power Offered at 48V DC
+			0 (default) 15.4W
+			1 4.0W
+			2 7.0W
+			3 15.4W
+			4 (802.3at) Up to 30W
+		
+	switch(config-if)# power inline { auto | static } [ max milliwatts ]
+	Switch(config-if)# power inline never
+	To monitor the power budget, Switch# show power inline
+	
+	
+	
+	Task Command Syntax
+Select a port. Switch(config)# interface type member/module/number
+Select multiple ports. Switch(config)# interface range type member/module/number [, type member/module/number ... ]
+or
+Switch(config)# interface range type member/module/first-number – last-number
+
+Define an interface macro. Switch(config)# define interface-range macro-name type member/module/number [, type member/module/number ...] [ type member/module/first-number – lastnumber
+] [...]
+Switch(config)# interface range macro macro-name
+
+Identify port. Switch(config-if)# description description-string
+Set port speed. Switch(config-if)# speed {10 | 100 | 1000 | auto}
+Set port mode. Switch(config-if)# duplex {auto | full | half}
+Detect port error conditions. Switch(config-if)# errdisable detect cause [all | causenam]
+Automatically recover fromerrdisable. Switch(config-if)# errdisable recovery cause [ all | causename] Switch(config-if)# errdisable recovery interval seconds
+Manually recover from errdisable. Switch(config-if)# shutdown Switch(config-if)# no shutdown
+Display ports in errdisable state Switch(config)# show interface status err-disabled
+From the Library of Outcast Outcast
+Display CDP neighbor information. Switch# show cdp neighbors [ type member/module/number ] [ detail ]
+Control CDP operation globally. Switch(config)# [no] cdp run
+Control CDP operation on an interface. Switch(config-if)# [ no ] cdp enable
+Display LLDP neighbor information. Switch(config)# show lldp neighbors [ type member/module/number ] [ detail ]
+Control LLDP operation globally. Switch(config)# [ no ] lldp run
+Control LLDP operation on an interface. Switch(config-if)# [ no ] lldp { receive |transmit }
+Set PoE behavior. Switch(config-if)# power inline { auto | static }[ max milliwatts ]
+Disable PoE on a switch port Switch(config-if)# power inline never
+Display PoE status. Switch# show power inline [ type member/mod/num ] [ detail ]
+
+
+
+Chapter 4. VLANs and Trunks
+
+Frames that barely exceed the MTU size are called baby giant frames . Switches usually report these frames as Ethernet errors or oversize frames.
+Note Baby giant, or oversize, frames can exceed the frame size set in various standards. To properly handle and forward them anyway, Catalyst switches use proprietary hardware
+with the ISL encapsulation method. In the case of 802.1Q encapsulation, switches can comply with the IEEE 802.3ac standard, which extends the maximum frame length to 1522
+bytes.
+
+	Dynamic Trunking Protocol
+	
+		|You should disable DTP negotiation if a switch has a trunk link connected to a
+		 nontrunking router or firewall interface because those devices cannot participate in DTP
+		 negotiation. A trunk link can be negotiated between two switches only if both switches
+		 belong to the same VLAN Trunking Protocol (VTP) management domain or if one or both
+		 switches have not defined their VTP domain (that is, the NULL domain). VTP is discussed
+		 in Chapter 5.\
+		 
+		 
+		 
+	Voice VLANs
+	 
+		switchport voice vlan { vlan-id | dot1p | untagged | none }
+		
+		
+		          Trunk?                Voice Traffic     PC Traffic
+vlan-id A         Yes                   VLAN vlan-id       Untagged
+dot1p   B         Yes                   VLAN 0             Untagged
+untagged C        Yes                   Untagged           Untagged
+none (default) D  No                    Access VLAN        Access VLAN
+
+
+
+	Wireless VLANs
+	
+		
+		Task Command Syntax
+Create VLAN.
+					Switch(config)# vlan vlan-num
+					Switch(config-vlan)# name vlan-name
+Assign port to VLAN. 
+					 Switch(config)# interface type member/module/number
+					 Switch(config-if)# switchport mode access
+					 Switch(config-if)# switchport access vlan vlan-num
+Configure trunk. 
+					 Switch(config)# interface type member/module/number
+					 Switch(config-if)# switchport trunk encapsulation {isl | dot1q |negotiate }
+					 Switch(config-if)# switchport trunk native vlan vlan-id
+					 Switch(config-if)# switchport trunk allowed vlan { vlan-list | all | {add | except | remove} vlan-list }
+					 Switch(config-if)# switchport mode {trunk | dynamic {desirable | auto }}
+Define the trunking on a port to a Cisco IP phone.
+
+					 Switch(config-if)# switchport voice vlan { vlan-id | dot1p |untagged | none }
+
+					 Table 4-5 VLAN and Trunking Troubleshooting Commands
+Task Command Syntax
+
+Verify VLAN configuration. 
+					Switch# show vlan id vlan-id
+					Switch# show vlan [ brief ]
+Verify active trunk parameters.
+					Switch# show interface type member/module/number trunk
+Compare trunk configuration and active parameters.
+					Switch# show interface type member/module/number switchport
+Verify DTP operation. Switch# show dtp [ interface
+
+   VTP
+
+		■ While a switch is in VTP transparent mode, it can create and delete VLANs that are
+local only to itself. These VLAN changes, however, are not propagated to any other switch.
+		Versions 1 and 2 support VLAN numbers 1 to 1005, whereas only VTP Version 3 supports
+the full extended VLAN range 1 to 4094.
+
+		■ VTP switches use an index called the VTP configuration revision number to keep track
+of the most recent information. Every switch in a VTP domain stores the configuration
+revision number that it last heard from a VTP advertisement. The VTP advertisement process
+always starts with configuration revision number 0.\
+
+		■ VTP advertisements can occur in three forms:
+			
+			SUMMARY ADVERTISEMENTS : VTP domain servers send summary advertisements every
+300 seconds and every time a VLAN database change occurs. The summary advertisement
+lists information about the management domain, including VTP version,domain name, configuration revision number, 
+time stamp, MD5 encryption hash code, and the number of subset advertisements to follow.
+			SUBSET ADVERTISEMENTS : VTP domain servers send subset advertisements after a
+VLAN configuration change occurs. These advertisements list the specific changes that have been performed, such 
+as creating or deleting a VLAN, suspending or activating a VLAN, changing the name of a VLAN, and changing a VLAN’s maximum
+transmission unit (MTU)
+			ADVERTISEMENT REQUESTS FROM CLIENTS : A VTP client can request any VLAN information it lacks. For example, a client 
+switch might be reset and have its VLAN database cleared, and its VTP domain membership might be changed, or it might hear a VTP
+summary advertisement with a higher revision number than it currently has. After a client advertisement request, the VTP domain 
+servers respond with summary and subset advertisements to bring it up to date.
+
+		Catalyst switches in server mode store VTP information separately from the switch configuration
+in NVRAM. VLAN and VTP data are saved in the vlan.dat file on the switch’s
+flash memory file system. All VTP information, including the VTP configuration revision
+number, is retained even when the switch power is off. In this manner, a switch can recover
+the last known VLAN configuration from its VTP database after it reboots.
+
+		■	VTP Synchronization
+		
+		
+		Whenever a switch receives a VTP advertisement with a configuration revision number
+that is greater than the value stored locally, it considers the advertisement to contain
+newer information. The switch will overwrite its own VLAN data with the newer version—
+even if the newer version contains irrelevant information. Because of this, it is very
+important to always force any newly added network switches to have revision number 0
+before being attached to the network. Otherwise, a switch might have stored a revision
+number that is greater than the value currently in use in the domain.
+The VTP revision number is stored in NVRAM and is not altered by a power cycle of the
+switch; therefore, the revision number can be initialized to 0 only by using one of the following
+methods:
+		■ 	Change the switch’s VTP mode to transparent and then change the mode back to server.
+		■ 	Change the switch’s VTP domain to a bogus name (a nonexistent VTP domain), and then change the VTP domain back to the original name.
+		vtp domain null
+		
+		
+Function Command Syntax
+Displays current VTP parameters,
+including the last advertising server        show vtp status
+Displays defined VLANs                       show vlan brief
+Displays trunk status, including
+pruning eligibility                          show interface type member/module/number switchport
+Displays VTP pruning state                   show interface type member/module/number pruning
+Define the VTP domain. 						Switch(config)# vtp domain domain-name
+Set the VTP mode. 							Switch(config)# vtp mode { server | client |
+transparent | off }
+Define an optional VTP password. 			Switch(config)# vtp password password [ hidden | secret ]
+Configure VTP version.						Switch(config)# vtp version { 1 | 2 | 3 }
+Enable VTP pruning. 						Switch(config)# vtp pruning
+Select VLANs eligible for pruning on a trunk
+interface. 									Switch(config)# interface type member/
+module/number 								Switch(config-if)# switchport trunk prunin vlan { add | except | none | remove } vlan-list
+	
+	
+	1 c
+	2 c
+	3 b
+	4 a b
+	5 a c
+	6 a
+	7 a b
+	8 c d
+	9 a b
+	10 a b
+	11 c 
+	
+	
+TRADITIONAL SPANNING TREE PROTOCOL
+	
+	If a frame arrives with a destination address that is not found in the bridge table, the
+		bridge cannot determine which port to forward the frame to for transmission. This
+		type of frame is known as an UNKNOWN UNICAST .
+		bridge protocol data units (BPDUs).
+	
+	SPANNING-TREE COMMUNICATION: BRIDGE PROTOCOL DATA UNITS
+		
+			Two types of BPDU exist:
+				- Configuration BPDU , used for spanning-tree computation
+				- Topology Change Notification (TCN) BPDU , used to announce changes in the network
+				
+			By default, BPDUs are sent out all switch ports every 2 seconds
+	
+	ELECTING A ROOT BRIDGE
+	
+		bridge ID =
+			-	Bridge Priority (2 bytes ): The priority or weight of a switch in relation to all other
+						switches. The Priority field can have a value of 0 to 65,535 and defaults to 32,768 (or
+						0x8000) on every Catalyst switch.
+			-	MAC Address (6 bytes ): The MAC address used by a switch can come from the
+						Supervisor module, the backplane, or a pool of 1024 addresses that are assigned to
+						every supervisor or backplane, depending on the switch model. In any event, this
+						ddress is hard-coded and unique, and the user cannot change it. 
+			- A root bridge is considered better if the root bridge ID value is lower than ANOTHER
+	
+	
+	ELECTING ROOT PORTS
+	
+			In each determination process discussed so far, two or more links might have identical
+		root path costs. This results in a tie condition, unless other factors are considered. All tiebreaking
+		STP decisions are based on the following sequence of four conditions:
+		1. Lowest root bridge ID
+		2. Lowest root path cost to root bridge
+		3. Lowest sender bridge ID
+		4. Lowest sender port ID
+		
+		
+		
+		Chapter 7 - Spanning-tree configuration
+		
+		
+		1. a --> c
+		2. c
+		3. c
+		4. d
+		5. c
+		6. d --> c
+		7. a --> c
+		8. b
+		9. b --> d 
+		10. a --> c
+		11. a
+		12. d --> a
+		13. a --> d
+		14. c
+		
+		
+		spanning-tree extend system-id --> extended system method ID
+		
+		Switch(config)# SPANNING-TREE VLAN vlan-list PRIORITY bridge-priority
+		
+		Switch(config-if)# spanning-tree vlan 10,100 port-priority
+		
+		Switch(config)# spanning-tree [ vlan vlan-id ] hello-time seconds            default 2
+        Switch(config)# spanning-tree [ vlan vlan-id ] forward-time seconds          default 15
+        Switch(config)# spanning-tree [vlan vlan-id ] max-age seconds                default 20
+		
+		
+		Redundant Link Convergence
+		Some additional methods allow faster STP convergence if a link failure occurs:
+			■ PortFast : Enables fast connectivity to be established on access layer switch ports to
+		workstations that are booting
+	
+				Switch(config-if)# SWITCHPORT HOST
+				switchport mode will be set to access
+				spanning-tree portfast will be enabled
+				channel group will be disabled
+				
+				Check
+				
+				sHOW SPANNING-TREE INTERFACE GIGABITETHERNET 1/0/10 PORTFAST
+
+			■ UplinkFast: Enables fast-uplink failover on an access layer switch when dual uplinks
+		are connected into the distribution layer
+
+				Switch(config)# spanning-tree uplinkfast [max-update-rate pkts-per-second ]
+				
+			■ BackboneFast : Enables fast convergence in the network
+			
+			
+					BackboneFast is simple to configure and operates by short-circuiting the Max Age timer
+				when needed. Although this function shortens the time a switch waits to detect a root
+				path failure, ports still must go through full-length Forward Delay timer intervals during
+				the Listening and Learning states. Where PortFast and UplinkFast enable immediate transitions,
+				BackboneFast can reduce the maximum convergence delay only from 50 to 30
+				seconds.
+				To configure BackboneFast, use the following global configuration command:
+				Switch(config)# spanning-tree backbonefast
+		
+	
+	Monitoring STP		
+	
+	
+	CHAPTER 8 Protecting the Spanning Tree Protocol Topology
+	
+	
+			Protecting Against Unexpected BPDUs
+			
+				Root Guard
+					
+					Switch(config-if)# spanning-tree guard root
+					Switch# show spanning-tree inconsistentports
+					Switch(config)# spanning-tree portfast bpduguard default
+					Switch(config-if)# [ no] spanning-tree bpduguard enable
+					
+				Loop Guard
+				
+				Switch(config)# spanning-tree loopguard default
+				Switch(config-if)# [ no ] spanning-tree guard loop\
+				
+				
+				UDLD UNIDIRECTIONAL LINK DETECT
+				
+				Switch(config)# udld { enable | aggressive | message time seconds }
+				Switch(config-if)# udld { enable | aggressive | disable }
+				
+				
+	CHAPTER 9 Advanced Spanning Tree Protocol
+	
+			RSTP = 802.1W
+	
+							■ Discarding : Incoming frames simply are dropped; no MAC addresses are learned.
+				(This state combines the 802.1D Disabled, Blocking, and Listening states because all
+				three did not effectively forward anything. The Listening state is not needed because
+				RSTP quickly can negotiate a state change without listening for BPDUs first.)
+							■ Learning : Incoming frames are dropped, but MAC addresses are learned.
+							■ Forwarding : Incoming frames are forwarded according to MAC addresses that have
+				been (and are being) learned.
+				
+			Port Types
+			
+				Every switch port can be considered one of the following types:
+							■ Edge port : A port at the “edge” of the network, where only a single host connects.
+				Traditionally, this has been identified by enabling the STP PortFast feature. RSTP
+				keeps the PortFast concept for familiarity. By definition, the port cannot form a loop
+				as it connects to one host, so it can be placed immediately in the Forwarding state.
+				However, if a BPDU ever is received on an edge port, the port immediately loses its
+				edge port status.
+							■ Root port : The port that has the best cost to the root of the STP instance. Only one
+				root port can be selected and active at any time, although alternative paths to the
+				root can exist through other ports. If alternative paths are detected, those ports are
+				identified as alternative root ports and immediately can be placed in the Forwarding
+				state when the existing root port fails.
+							■ Point-to-point port : Any port that connects to another switch and becomes a designated
+				port. A quick handshake with the neighboring switch, rather than a timer expiration,
+				decides the port state. BPDUs are exchanged back and forth in the form of a
+				proposal and an agreement. One switch proposes that its port becomes a designated
+				port; if the other switch agrees, it replies with an agreement message.
+
+			Synchronization
+				
+					To participate in RSTP convergence, a switch must decide the state of each of its ports.
+				Nonedge ports begin in the Discarding state. After BPDUs are exchanged between the
+				switch and its neighbor, the Root Bridge can be identified. If a port receives a superior
+				BPDU from a neighbor, that port becomes the root port.
+				
+			Topology Changes and RSTP
+
+                RSTP detects a topology change only when a nonedge port transitions to the Forwarding
+                state. This might seem odd because a link failure is not used as a trigger. RSTP uses all its
+                rapid convergence mechanisms to prevent bridging loops from forming. Therefore, topology
+                changes are detected only so that bridging tables can be updated and corrected as
+                hosts appear first on a failed port and then on a different functioning port.
+			
+	CHAPTER 9 Aggregating Switch Links
+			
+			
+			
+			Configuring EtherChannel Load Balancing
+			
+The hashing operation can be performed on either MAC or IP addresses and can be
+based solely on source or destination addresses, or both. Use the following command to
+configure frame distribution for all EtherChannel switch links:
+Switch(config)# port-channel load-balance method
+Notice that the load-balancing method is set with a global configuration command. You
+must set the method globally for the switch, not on a per-port basis. Table 10-3 lists
+the possible values for the method variable, along with the hashing operation and some
+sample supporting switch models.
+	Table 10-3 Types of EtherChannel Load-Balancing Methods
+			Method Value Hash Input Hash Operation Switch Model
+					- src-ip Source IP address Bits All models
+					- dst-ip Destination IP address Bits All models
+                    - src-dst-ip Source and destination IP address XOR All models
+                    - src-mac Source MAC address Bits All models
+                    - dst-mac Destination MAC address Bits All models
+                    - src-dst-mac Source and destination MAC XOR All models
+                    - src-port Source port number Bits 4500, 6500
+                    - dst-port Destination port number Bits 4500, 6500
+                    - src-dst-port Source and destination port XOR 4500, 6500
+					
+					
+					
+				EtherChannel Negotiation Protocols
+				packets
+EtherChannels can be negotiated between two switches to provide some dynamic link
+configuration. Two protocols are available to negotiate bundled links in Catalyst switches.
+The Port Aggregation Protocol (PAgP) is a Cisco proprietary solution, and the Link
+Aggregation Control Protocol (LACP) is standards based.
+
+
+
+Configuring a PAgP EtherChannel
+
+
+To configure switch ports for PAgP negotiation (the default), use the following
+commands:
+Switch(config)# interface type member/module/number
+Switch(config-if)# channel-protocol pagp
+Switch(config-if)# channel-group number mode { on | {{ auto | desirable }
+[ non-silent ]}}
+
+Switch(config)# port-channel load-balance src-dst-port
+Switch(config)# interface range gig 1/0/1 – 4
+Switch(config-if)# channel-protocol pagp
+Switch(config-if)# channel-group 1 mode desirable non-silent
+
+
+
+Configuring a LACP EtherChannel
+
+
+To configure switch ports for LACP negotiation, use the following commands:
+Switch(config)# lacp system-priority priority
+Switch(config)# interface type member/module/number
+Switch(config-if)# channel-protocol lacp
+Switch(config-if)# channel-group number mode { on | passive | active }
+Switch(config-if)# lacp port-priority priority
+
+
+
+Switch(config)# [ no ] spanning-tree etherchannel guard misconfig
+
+
+
+
+
+
+
+*Mar 1 03:11:55.726: %GBIC_SECURITY_CRYPT-4-VN_DATA_CRC_ERROR: GBIC in port Te1/1/1 has bad crc 
+*Mar 1 03:11:55.726: %PHY-4-SFP_PLUS_NOT_SUPPORTED: The SFP PLUS in Te1/1/1 is not supported 
+*Mar 1 03:11:59.905: %GBIC_SECURITY_CRYPT-4-VN_DATA_CRC_ERROR: GBIC in port Te2/1/1 has bad crc 
+*Mar 1 03:11:59.905: %PHY-4-SFP_PLUS_NOT_SUPPORTED: The SFP PLUS in Te2/1/1 is not supported 
+*Mar 1 03:12:01.088: %GBIC_SECURITY_CRYPT-4-VN_DATA_CRC_ERROR: GBIC in port Te2/1/1 has bad crc 
+*Mar 1 03:12:01.088: %PHY-4-SFP_PLUS_NOT_SUPPORTED: The SFP PLUS in Te2/1/1 is not supported
+
+Command used to unlock the support:
+
+(config)#service unsupported-transceiver 
+(config)#no errdisable detect cause gbic-invalid
+
+
+
+
+                 Chapter 14 Managing Switching with SNMP
+				 
+				 1. a
+				 2. c 
+				 3. d 
+				 4. b c 
+				 5. b 
+				 6. c d
+				 7. c 
+				 8. e 
+				 
+				 
+				 
+				 Chapter 15 Monitoring performance with IP SLA
+				 
+				 1. a b
+				 2. a b c d e f  -> a c
+				 3. d 
+				 4. b 
+				 5. d b
+				 6. d
+				 
+				 
+				 
+				 
+				 Chapter 19 Securing Switches access 
+				 
+				 
+				    Switch(config)# aaa new-model
+                    Switch(config)# radius-server host 10.1.1.1 key BigSecret
+                    Switch(config)# radius-server host 10.1.1.2 key AnotherBigSecret
+                    Switch(config)# aaa authentication dot1x default group radius
+                    Switch(config)# dot1x system-auth-control
+                    Switch(config)# interface range gigabitethernet1/0/1 - 40
+                 Switch(config-if)# switchport access vlan 10
+                 Switch(config-if)# switchport mode access
+                 Switch(config-if)# dot1x port-control auto
+				 
+				 
+				 
+				 Using Storm Control
+				 
+				 
+					Switch(config-if)# storm-control { broadcast | multicast | unicast } level { level [ level-low ] | bps bps [ bps-low ] | pps pps [ pps-low ]}
+					Switch(config-if)# storm-control action { shutdown | trap }
+
+				Best Practices for Securing Switches
+				
+				service password-encryption
+				enable secret ...
+				use aaa for acounts
+				
+				Secure web interface:
+				
+				     Switch(config)# ip http secure server
+                     Switch(config)# access-list 1 permit 10.100.50.0 0.0.0.255
+                     Switch(config)# ip http access-class 1
+				 
+				 Secure the switch console:
+				 
+				 Secure virtual terminal access:
+				 
+				   Switch(config)# access-list 10 permit 192.168.199.10
+                   Switch(config)# access-list 10 permit 192.168.201.100
+                   Switch(config)# line vty 0 15
+                   Switch(config-line)# access-class 10 in
+				   
+				   
+			   Use SSH whenever possible:
+			   
+			   Secure SNMP access:
+			   
+			   snmp-server community string rw .
+			   
+			        Secure unused switch ports: Every unused switch port should be disabled so that
+                  unexpected users cannot connect and use them without your knowledge. You can
+                  do this with the shutdown interface configuration command.
+                  In addition, you should configure every user port as an access
+				  
+				  
+			            Switch(config)# interface gigabitethernet 1/0/1
+                        Switch(config-if)# switchport host
+                        switchport mode will be set to access
+                        spanning-tree portfast will be enabled
+                        channel group will be disabled
+                        Switch(config-if)#
+						
+               Disable cdp and lldp: no cdp enable
+			   
+			   
+			   
+			   
+			   Chapter 20: Securing VLAN
+			   
+			   1. b c
+			   2. b d
+			   3. a d 
+			   4. a 
+			   5. c b
+			   6. a 
+			   7. b c
+			   8.   a 
+			   9. b d
+			   10. d a
+			   11. a a
+			   12. a c
