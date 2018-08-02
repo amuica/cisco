@@ -688,16 +688,32 @@ Command used to unlock the support:
 			to a switch. Each of the private VLANs must be configured locally on each switch
 			that interconnects them.
 			
+			
+			
+				You must configure each physical switch port that uses a private VLAN with a VLAN
+            association. You also must define the port with one of the following modes:
+            ■ Promiscuous: The switch port connects to a router, firewall, or other common gateway
+            device. This port can communicate with anything else connected to the primary
+            or any secondary VLAN. In other words, the port is in promiscuous mode, in which
+            the rules of private VLANs are ignored.
+            ■ Host : The switch port connects to a regular host that resides on an isolated or community
+            VLAN. The port communicates only with a promiscuous port or ports on
+            the same community VLAN.
+			
 	Private VLAN Configuration
 	
 			Switch(config)# vlan vlan-id
 			Switch(config-vlan)# private-vlan { isolated | community }
+			
+			witch(config)# vlan vlan-id
+			Switch(config-vlan)# private-vlan primary
+			Switch(config-vlan)# private-vlan association { secondary-vlan-list | add secondary-vlan-list | remove secondary-vlan-list }
 			  
 			Switch(config)# vlan 10
 Switch(config-vlan)# private-vlan community
 Switch(config-vlan)# vlan 20
 Switch(config-vlan)# private-vlan community
-Switch(config-vlan)# vlan 3 0
+Switch(config-vlan)# vlan 30
 Switch(config-vlan)# private-vlan isolated
 Switch(config-vlan)# vlan 100
 Switch(config-vlan)# private-vlan primary
@@ -717,5 +733,33 @@ Switch(config-if)# switchport private-vlan host-association 100 30
 Switch(config-if)# exit
 Switch(config)# interface gigabitethernet 1/0/48
 Switch(config-if)# switchport mode private-vlan promiscuous
-Switch(config-if)# switchport private-vlan mapping 100 10,20,30
+Switch(config
+					To-if)# switchport private-vlan mapping 100 10,20,30
 			  
+			  
+			  
+			  Securing VLAN Trunks
+			  
+			    
+				Switch Spoofing
+				
+									The solution to this situation is to configure every switch port to have an expected and
+					controlled behavior. For example, instead of leaving an end-user switch port set to use
+					DTP in auto mode, configure it to static access mode with the following commands:
+					Switch(config)# interface type member/mod/num
+					Switch(config-if)# switchport access vlan vlan-id
+					Switch(config-if)# switchport mode access
+				VLAN Hopping
+				
+					Step 1. Set the native VLAN of a trunk to a bogus or unused VLAN ID.
+					Step 2. Prune the native VLAN off both ends of the trunk.
+					
+				Force a switch to tag the native VLAN on all its 802.1Q trunks, you can use the following command:
+				Switch(config)# vlan dot1q tag native
+				
+				
+				
+				Chapter 21 - Preventing Spoofing Attacks
+				
+				1. b 
+				2. 
