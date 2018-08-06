@@ -1,5 +1,5 @@
 
-page 438
+page 452
 page 449
 
 A campus network:
@@ -761,5 +761,10 @@ Switch(config
 				
 				Chapter 21 - Preventing Spoofing Attacks
 				
-				1. b 
-				2. 
+				1. d b
+				2. d b
+				3. d / c d
+				4. b / c
+				5. a /b 
+				6, b  / c
+			
