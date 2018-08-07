@@ -1,6 +1,6 @@
 
 page 452
-page 449
+page 464
 
 A campus network:
 			- is an enterprise network consisting of many LANs in one or more
@@ -767,4 +767,101 @@ Switch(config
 				4. b / c
 				5. a /b 
 				6, b  / c
+				
+				
+				
+				
+				DHCP Snooping
+				
+				
+				Cisco Catalyst switches can use the DHCP snooping feature to help mitigate this type
+of attack. When DHCP snooping is enabled, switch ports are categorized as trusted or
+untrusted. Legitimate DHCP servers can be found on trusted ports, whereas all other
+hosts sit behind untrusted ports.
+
+
+
+				Switch(config)# ip dhcp snooping
+				Switch(config)# ip dhcp snooping vlan vlan-id [vlan-id ]
+				Switch(config)# interface type member/module/number
+				Switch(config-if)# ip dhcp snooping trust
+				
+				DHCP traffic on an untrusted port, use the following interface configuration command:
+				Switch(config)# interface type member/module/number
+				Switch(config-if)# ip dhcp snooping limit rate rate
+				
+				
+				Switch(config)# [ no ] ip dhcp snooping information option
+				When DHCP snooping is configured, you can display its status with the following command:
+				Switch# show ip dhcp snooping [ binding ]
+			
+			
+			
+			
+			Switch(config)# ip dhcp snooping
+            Switch(config)# ip dhcp snooping vlan 104
+            Switch(config)# interface range gigabitethernet 1/0/35 – 36
+            Switch(config-if)# ip dhcp snooping limit rate 3
+            Switch(config-if)# interface gigabitethernet 1/1/1
+            Switch(config-if)# ip dhcp snooping trust
+			
+			
+			
+			IP Source Guard
+			
+			
+			
+				The source IP address must be identical to the IP address learned by DHCP snooping
+				or a static entry. A dynamic port access control list (ACL) is used to filter traffic.
+				The switch automatically creates this ACL, adds the learned source IP address to the
+				ACL, and applies the ACL to the interface where the address is learned.
+				■ The source MAC address must be identical to the MAC address learned on the
+				switch port and by DHCP snooping. Port security is used to filter traffic.		
+				
+				
+				
+				
+			Switch(config)# ip source binding mac-address vlan vlan-id ip-address interface
+type member/module/number
+			Switch(config)# interface type member/module/number
+			Switch(config-if)# ip verify source [port-security ]
+			
+			
+			Dynamic ARP Inspection
+			
+			
+			This attack is known as ARP poisoning or ARP spoofing , and it is considered to be a
+			type of man-in-the-middle attack. The attacker wedges into the normal forwarding path,
+			transparent to the end users. Cisco Catalyst switches can use the dynamic ARP inspection
+			(DAI) feature to help mitigate this type of attack.
+			
+			
+			Switch(config)# ip arp inspection vlan vlan-range
+			Switch(config)# interface type member/module/number
+			Switch(config-if)# ip arp inspection trust
+			
+			
+			
+			
+			Switch(config)# ip arp inspection vlan 104
+			Switch(config)# arp access-list StaticARP
+			Switch(config-acl)# permit ip host 192.168.1.10 mac host 0006.5b02.a841
+			Switch(config-acl)# exit
+			Switch(config)# ip arp inspection filter StaticARP vlan 104
+			Switch(config)# interface gigabitethernet 1/0/49
+			Switch(config-if)# ip arp inspection trust
+			
+			
+			CHAPTER 22 Managing switch users
+			
+			1. b c e
+			2. b
+			3. c e
+			4. d 
+			5. c
+			6. c / a
+			7. b 
+			8. D b
+			9. a c
+			10. b 
 			
