@@ -5,3 +5,5 @@
 third
 
 8012018 - Private VLAN
+
+10082018 - Finished learning and start testing

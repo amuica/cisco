@@ -449,8 +449,7 @@ TRADITIONAL SPANNING TREE PROTOCOL
 	CHAPTER 9 Aggregating Switch Links
 			
 			
-			
-			Configuring EtherChannel Load Balancing
+			dir
 			
 The hashing operation can be performed on either MAC or IP addresses and can be
 based solely on source or destination addresses, or both. Use the following command to
