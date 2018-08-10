@@ -865,3 +865,88 @@ type member/module/number
 			9. a c
 			10. b 
 			
+			
+			User authentication can be handled by several methods:
+						
+						■ Usernames and passwords configured locally on the switch
+						■ One or more external Remote Authentication Dial-In User Service (RADIUS) servers
+						■ One or more external Terminal Access Controller Access Control System+
+					(TACACS+) servers
+			
+			Configuring Authentication
+			
+			
+			1. Enable AAA:
+			
+			      Switch(config)# aaa new-model
+				  
+			Step 2. Define the source of authentication.
+			
+			Switch(config)# username username password password
+			
+			
+			Use one of the following global configuration commands:
+			Switch(config)# radius-server host { hostname | ip-address } [ key
+			string ]
+			Switch(config)# tacacs-server host { hostname | ip-address } [ key
+			string ]
+			Then define a group name that will contain a list of servers, using the following
+			global configuration command:
+			Switch(config)# aaa group server { radius | tacacs+ } group-name
+			Define each server of the group type with the following server-group configuration
+			command:
+			Switch(config-sg)# server ip-address
+			
+			
+			
+			
+			
+			
+			Switch(config)# aaa new-model
+			Switch(config)# username lastresort password MySecretP@ssw0rd
+			Switch(config)# tacacs-server host 192.168.10.10 key t@c@csk3y
+			Switch(config)# tacacs-server host 192.168.10.11 key t@c@csk3y
+			Switch(config)# aaa group server tacacs+ myauthservers
+			Switch(config-sg)# server 192.168.10.10
+			Switch(config-sg)# server 192.168.10.11
+			Switch(config-sg)# exit
+			Switch(config)# aaa authentication login myauth group myauthservers local
+			Switch(config)# line vty 0 15
+			Switch(config-line)# login authentication myaut
+			
+			
+			
+			
+			Configuring Authorization
+			
+			
+			Switch(config)# aaa authorization { commands | config-commands | configuration | exec | network | reverse-access } { default |
+list-name } method1 [ method2 ...]
+
+
+
+			Here you specify the function or service needing authorization with one of the following
+				keywords:
+								■ commands: The server must return permission to use any switch command at any
+								privilege level.
+								■ config-commands: The server must return permission to use any switch configuration
+								command.
+								From the Library of Outcast Outcast
+								Chapter 22: Managing Switch Users 469
+								■ configuration: The server must return permission to enter the switch configuration
+								mode.
+								■ exec: The server must return permission for the user to run a switch EXEC session.
+								The server also can return the privilege level for the user so that the user immediately
+								can be put into privileged EXEC (enable) mode without having to type in the
+								enable command.
+								■ network: The server must return permission to use network-related services.
+								■ reverse-access: The server must return permission for the user to access a reverse
+								Telnet session on the switch.
+								
+								
+								\
+			Configure Accounting
+			
+			
+			Switch(config)# aaa accounting exec default start-stop group myauthservers
+Switch(config)# aaa accounting commands 15 default start-stop group myauthservers
